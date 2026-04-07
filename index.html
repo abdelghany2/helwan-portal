@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCAIH — Doctor Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1a73e8;
+  --teal: #00acc1;
+  --purple: #ab47bc;
+  --green: #66bb6a;
+  --pink: #ef5350;
+  --sidebar-w: 230px;
+  --radius: 8px;
+  --bg: #eceff1;
+  --white: #ffffff;
+  --text: #212121;
+  --text-muted: #757575;
+  --border: #e0e0e0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* LOGIN */
+#login-page{display:flex;min-height:100vh;background:#f5f5f5;}
+.login-left{flex:1;background:linear-gradient(135deg,#e8eaf6,#e3f2fd,#f5f5f5);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.login-bg-art{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 30% 80%,rgba(200,215,255,0.5),transparent 60%),radial-gradient(ellipse 40% 60% at 70% 20%,rgba(179,229,252,0.4),transparent 60%);}
+.dots-bg{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(130,160,255,0.18) 1.5px,transparent 1.5px);background-size:28px 28px;opacity:0.7;}
+.login-logo-wrap{position:relative;z-index:1;}
+.logo-svg-wrap{display:flex;align-items:center;gap:16px;padding:20px 32px;background:rgba(255,255,255,0.7);border-radius:12px;box-shadow:0 4px 24px rgba(26,115,232,0.08);}
+.logo-icon-box{width:80px;height:80px;display:flex;align-items:center;justify-content:center;}
+.logo-icon-box svg{width:80px;height:80px;}
+.logo-text-col{display:flex;flex-direction:column;gap:2px;}
+.logo-ar{font-family:'Cairo',sans-serif;font-size:18px;font-weight:700;color:#1a237e;direction:rtl;text-align:right;line-height:1.3;}
+.logo-en{font-size:13px;font-weight:500;color:#1565c0;line-height:1.4;max-width:200px;}
+.login-right{width:520px;min-width:320px;background:#fff;display:flex;align-items:center;justify-content:center;padding:60px 56px;box-shadow:-4px 0 32px rgba(0,0,0,0.06);}
+.login-form{width:100%;}
+.portal-title{font-size:21px;font-weight:700;color:#212121;text-align:center;line-height:1.4;margin-bottom:8px;}
+.portal-sub{font-size:13px;color:#1565c0;text-align:center;margin-bottom:24px;font-weight:500;background:#e3f2fd;padding:6px 16px;border-radius:20px;display:inline-block;width:100%;}
+.hint-box{background:#e8f0fe;border-left:3px solid var(--primary);border-radius:4px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:#1565c0;}
+.hint-box b{display:block;margin-bottom:2px;font-size:13px;}
+.form-group{margin-bottom:18px;position:relative;}
+.form-group input{width:100%;padding:13px 46px 13px 14px;border:1.5px solid #bdbdbd;border-radius:4px;font-family:'Roboto',sans-serif;font-size:15px;color:#212121;outline:none;transition:border-color 0.2s;}
+.form-group input:focus{border-color:#1a73e8;}
+.form-group input.err{border-color:#e53935;}
+.field-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#9e9e9e;font-size:17px;cursor:pointer;display:flex;align-items:center;}
+.error-msg{color:#e53935;font-size:12px;margin-top:4px;display:none;}
+.remember-row{display:flex;align-items:center;gap:8px;margin-bottom:24px;}
+.remember-row input[type=checkbox]{width:16px;height:16px;accent-color:#1a73e8;cursor:pointer;}
+.remember-row label{font-size:14px;color:#757575;cursor:pointer;}
+.login-btn{width:100%;padding:13px;background:#bdbdbd;color:#757575;border:none;border-radius:4px;font-family:'Roboto',sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.login-btn.ready{background:linear-gradient(135deg,#1a237e,#1a73e8);color:#fff;}
+.login-btn.ready:hover{box-shadow:0 4px 16px rgba(26,115,232,0.4);}
+.login-footer{text-align:center;margin-top:36px;padding-top:18px;border-top:1px solid #eee;font-size:12px;color:#424242;}
+
+/* DASHBOARD */
+#dashboard-page{display:none;min-height:100vh;background:var(--bg);}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:#fff;height:56px;display:flex;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:0 16px 0 0;}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;}
+.brand-name{font-size:16px;font-weight:700;color:#1a237e;letter-spacing:0.5px;}
+.topbar-hamburger{font-size:22px;color:#555;cursor:pointer;padding:8px;margin-right:8px;border-radius:4px;}
+.topbar-hamburger:hover{background:#f5f5f5;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+.dr-badge{background:#e8f0fe;color:#1a237e;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.topbar-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a73e8,#00acc1);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;cursor:pointer;}
+
+/* Sidebar */
+.sidebar{position:fixed;top:56px;left:0;bottom:0;width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;overflow-y:auto;transition:transform 0.28s cubic-bezier(.4,0,.2,1);}
+.sidebar-user{padding:14px 16px 10px;border-bottom:1px solid #f0f0f0;}
+.s-name{font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;color:#1a237e;direction:rtl;}
+.s-role{font-size:11px;color:#757575;margin-top:2px;}
+.sidebar-menu-label{padding:10px 16px 4px;font-size:11px;font-weight:700;color:#9e9e9e;text-transform:uppercase;letter-spacing:1px;}
+.nav-item{display:flex;align-items:center;gap:14px;padding:11px 16px;font-size:14px;color:#616161;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;}
+.nav-item:hover{background:#f5f5f5;color:#212121;}
+.nav-item.active{color:var(--primary);background:#e8f0fe;border-left:3px solid var(--primary);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-divider{height:1px;background:var(--border);margin:8px 0;}
+.nav-logout{display:flex;align-items:center;gap:14px;padding:11px 16px;font-size:14px;color:#616161;cursor:pointer;transition:all 0.15s;margin-top:auto;}
+.nav-logout:hover{background:#fce4ec;color:#c62828;}
+
+/* Main */
+.main-content{margin-left:var(--sidebar-w);margin-top:56px;min-height:calc(100vh - 56px);padding:24px;}
+.page{display:none;}
+.page.active{display:block;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-header h2{font-size:20px;font-weight:600;}
+
+/* Home */
+.welcome-row{display:flex;gap:20px;margin-bottom:20px;}
+.welcome-card{flex:1;background:#fff;border-radius:var(--radius);padding:22px 26px;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.wc-title{font-size:12px;font-weight:600;color:#757575;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.wc-name{font-family:'Cairo',sans-serif;font-size:19px;font-weight:700;color:#1a237e;}
+.wc-dept{font-size:13px;color:#757575;margin-top:4px;}
+.profile-btn-card{min-width:200px;cursor:pointer;background:linear-gradient(135deg,#1a73e8,#00acc1);border-radius:var(--radius);padding:22px 26px;display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;font-size:17px;font-weight:500;box-shadow:0 2px 8px rgba(26,115,232,0.3);transition:all 0.2s;}
+.profile-btn-card:hover{transform:translateY(-2px);}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.dashboard-card{border-radius:var(--radius);padding:26px 22px;color:#fff;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;min-height:95px;box-shadow:0 2px 8px rgba(0,0,0,0.12);position:relative;overflow:hidden;}
+.dashboard-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.12);}
+.dashboard-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.18);}
+.dc-label{font-size:15px;font-weight:500;line-height:1.3;position:relative;z-index:1;}
+.dc-icon{font-size:26px;position:relative;z-index:1;}
+.card-blue{background:linear-gradient(135deg,#1a73e8,#0d47a1);}
+.card-green{background:linear-gradient(135deg,#66bb6a,#388e3c);}
+.card-pink{background:linear-gradient(135deg,#ef5350,#c62828);}
+.card-purple{background:linear-gradient(135deg,#ab47bc,#8e24aa);}
+.card-indigo{background:linear-gradient(135deg,#5c6bc0,#283593);}
+.card-orange{background:linear-gradient(135deg,#ffa726,#e65100);}
+.card-teal{background:linear-gradient(135deg,#26c6da,#00838f);}
+
+/* Grade table */
+.course-selector{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.course-pill{padding:7px 16px;border-radius:20px;border:1.5px solid #e0e0e0;background:#fff;cursor:pointer;font-size:13px;font-weight:500;color:#757575;transition:all 0.15s;}
+.course-pill.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.course-pill:hover:not(.active){border-color:var(--primary);color:var(--primary);}
+.grades-wrap{background:#fff;border-radius:var(--radius);box-shadow:0 1px 4px rgba(0,0,0,0.08);overflow:hidden;}
+.grades-toolbar{padding:14px 18px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.grades-toolbar h3{font-size:14px;font-weight:600;}
+.grades-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.search-input{padding:7px 13px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:'Roboto',sans-serif;font-size:13px;outline:none;width:190px;}
+.search-input:focus{border-color:var(--primary);}
+.btn{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;transition:all 0.15s;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:#1557b0;}
+.btn-success{background:#43a047;color:#fff;}
+.btn-success:hover{background:#388e3c;}
+.btn-orange{background:#fb8c00;color:#fff;}
+.btn-orange:hover{background:#e65100;}
+.btn-purple{background:#8e24aa;color:#fff;}
+.btn-purple:hover{background:#6a1b9a;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-ghost{background:#f5f5f5;color:#555;border:1px solid #e0e0e0;}
+.btn-ghost:hover{background:#e0e0e0;}
+
+.pub-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;}
+.pub-yes{background:#e8f5e9;color:#2e7d32;}
+.pub-no{background:#fff3e0;color:#e65100;}
+
+table{width:100%;border-collapse:collapse;}
+thead tr{background:#fafafa;}
+th{padding:11px 13px;text-align:left;font-size:11px;font-weight:700;color:#757575;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #f0f0f0;}
+td{padding:10px 13px;font-size:13px;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafbff;}
+.grade-input{width:60px;padding:5px 5px;border:1.5px solid #e0e0e0;border-radius:4px;font-family:'Roboto',sans-serif;font-size:13px;text-align:center;outline:none;transition:all 0.15s;}
+.grade-input:focus{border-color:var(--primary);background:#e8f0fe;}
+.grade-input:disabled{background:#f5f5f5;color:#9e9e9e;border-color:#f0f0f0;}
+.grade-badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:12px;font-weight:600;}
+.grade-a{background:#e8f5e9;color:#2e7d32;}
+.grade-b{background:#e3f2fd;color:#1565c0;}
+.grade-c{background:#fff8e1;color:#f57f17;}
+.grade-d{background:#fce4ec;color:#c62828;}
+.grade-f{background:#ffebee;color:#b71c1c;}
+.edit-btn{background:#e3f2fd;color:var(--primary);border:none;padding:5px 9px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;transition:all 0.15s;}
+.edit-btn:hover{background:var(--primary);color:#fff;}
+.save-btn{background:#e8f5e9;color:#2e7d32;border:none;padding:5px 9px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;display:none;transition:all 0.15s;}
+.save-btn:hover{background:#43a047;color:#fff;}
+.stats-bar{display:flex;gap:14px;padding:14px 18px;background:#f8f9ff;border-top:1px solid #f0f0f0;flex-wrap:wrap;}
+.stat-item{text-align:center;min-width:55px;}
+.stat-value{font-size:19px;font-weight:700;color:var(--primary);}
+.stat-label{font-size:10px;color:#757575;text-transform:uppercase;letter-spacing:0.5px;}
+.pagination{display:flex;align-items:center;gap:6px;padding:12px 18px;border-top:1px solid #f0f0f0;flex-wrap:wrap;}
+.page-btn{padding:5px 10px;border:1.5px solid #e0e0e0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;transition:all 0.15s;}
+.page-btn:hover,.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.page-info{margin-left:auto;font-size:12px;color:#757575;}
+
+/* Publish page */
+.pub-section{margin-bottom:24px;}
+.pub-section-header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:14px 18px;border-bottom:1px solid #f0f0f0;}
+.pub-section-header h3{font-size:14px;font-weight:600;}
+.pub-status-bar{display:flex;gap:20px;padding:10px 18px;background:#f8f9ff;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
+.pub-status-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#757575;}
+.pub-dot{width:8px;height:8px;border-radius:50%;background:#ccc;}
+.pub-dot.yes{background:#43a047;}
+.pub-dot.no{background:#fb8c00;}
+
+/* Profile */
+.profile-card{background:#fff;border-radius:var(--radius);padding:32px;box-shadow:0 1px 4px rgba(0,0,0,0.08);max-width:580px;}
+.profile-avatar-big{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#1a73e8,#00acc1);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;font-weight:700;margin-bottom:8px;}
+.profile-role-tag{display:inline-block;background:#e3f2fd;color:#1565c0;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;margin-bottom:22px;}
+.profile-field{margin-bottom:16px;}
+.profile-field label{display:block;font-size:11px;font-weight:700;color:#757575;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.profile-field input{width:100%;padding:10px 13px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:'Roboto',sans-serif;font-size:14px;outline:none;transition:all 0.15s;}
+.profile-field input:focus{border-color:var(--primary);}
+
+/* Exams */
+.exam-card{background:#fff;border-radius:var(--radius);padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,0.08);margin-bottom:10px;display:flex;align-items:center;gap:20px;border-left:4px solid var(--primary);}
+.exam-date{text-align:center;min-width:48px;}
+.exam-date .day{font-size:24px;font-weight:700;color:var(--primary);line-height:1;}
+.exam-date .month{font-size:11px;color:#757575;font-weight:600;text-transform:uppercase;}
+.exam-info h4{font-size:14px;font-weight:600;margin-bottom:3px;}
+.exam-info p{font-size:12px;color:#757575;}
+.exam-badge{margin-left:auto;background:#e3f2fd;color:var(--primary);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+
+/* Timetable */
+.timetable-wrap{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);overflow-x:auto;}
+.tt-header{display:grid;grid-template-columns:90px repeat(5,1fr);background:#fafafa;border-bottom:2px solid #f0f0f0;min-width:540px;}
+.tt-cell{padding:11px;text-align:center;font-size:11px;font-weight:700;color:#757575;text-transform:uppercase;letter-spacing:0.5px;}
+.tt-row{display:grid;grid-template-columns:90px repeat(5,1fr);border-bottom:1px solid #f5f5f5;min-width:540px;}
+.tt-time{padding:11px;text-align:center;font-size:11px;font-weight:600;color:#757575;background:#fafafa;border-right:1px solid #f0f0f0;display:flex;align-items:center;justify-content:center;}
+.tt-slot{padding:5px;}
+.tt-class{background:linear-gradient(135deg,#1a73e8,#00acc1);color:#fff;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;}
+.tt-class-2{background:linear-gradient(135deg,#5c6bc0,#283593);color:#fff;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;}
+.tt-class-3{background:linear-gradient(135deg,#66bb6a,#2e7d32);color:#fff;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;}
+.tt-empty{padding:11px;}
+
+/* Toast */
+.toast{position:fixed;bottom:26px;right:26px;background:#323232;color:#fff;padding:11px 18px;border-radius:6px;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.35s;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid #66bb6a;}
+.toast.error{border-left:4px solid #ef5350;}
+.toast.info{border-left:4px solid #1a73e8;}
+
+/* Mobile */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;}
+@media(max-width:900px){.login-left{display:none;}.login-right{width:100%;padding:40px 28px;}.cards-grid{grid-template-columns:repeat(2,1fr);}.welcome-row{flex-direction:column;}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.sidebar-overlay.open{display:block;}.main-content{margin-left:0;padding:14px;}.topbar-brand{width:auto;}.cards-grid{grid-template-columns:1fr 1fr;gap:10px;}}
+@media(max-width:480px){.cards-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="login-page">
+  <div class="login-left">
+    <div class="dots-bg"></div>
+    <div class="login-bg-art"></div>
+    <div class="login-logo-wrap">
+      <div class="logo-svg-wrap">
+        <div class="logo-icon-box">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="14" width="54" height="36" rx="4" fill="none" stroke="#1565c0" stroke-width="2.5"/>
+            <rect x="11" y="17" width="48" height="30" rx="2" fill="#e3f2fd"/>
+            <text x="14" y="27" font-size="5" fill="#1976d2" font-family="monospace">11001001</text>
+            <text x="14" y="33" font-size="5" fill="#1976d2" font-family="monospace">01010110</text>
+            <text x="14" y="39" font-size="5" fill="#42a5f5" font-family="monospace">10110010</text>
+            <text x="14" y="45" font-size="5" fill="#42a5f5" font-family="monospace">00101101</text>
+            <rect x="27" y="50" width="16" height="8" rx="1" fill="#90caf9"/>
+            <rect x="21" y="57" width="28" height="3" rx="1.5" fill="#64b5f6"/>
+            <polygon points="62,16 72,20 62,24 52,20" fill="#0d47a1"/>
+            <rect x="61.5" y="20" width="1" height="8" fill="#0d47a1"/>
+            <rect x="56" y="27" width="12" height="4" rx="2" fill="#1565c0"/>
+          </svg>
+        </div>
+        <div class="logo-text-col">
+          <div class="logo-ar">كلية الحاسبات والذكاء الاصطناعي</div>
+          <div class="logo-en">Faculty of Computers &amp; Artificial Intelligence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-form">
+      <div class="portal-title">Faculty of Computer & Artificial Intelligence (Undergraduates Education Portal)
+</div>
+      <div class="form-group">
+        <input type="text" id="login-email" placeholder="Username" oninput="updateLoginBtn()">
+        <span class="field-icon">🔑</span>
+        <div class="error-msg" id="email-err">Username is required</div>
+      </div>
+      <div class="form-group">
+        <input type="password" id="login-pass" placeholder="Password" oninput="updateLoginBtn()">
+        <span class="field-icon" onclick="togglePass()" style="cursor:pointer;">👁️‍🗨️</span>
+        <div class="error-msg" id="pass-err">Password is required</div>
+      </div>
+      <div class="remember-row">
+        <input type="checkbox" id="remember">
+        <label for="remember">Remember me</label>
+      </div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Login</button>
+      <div class="login-footer">FCAIH Education Portal © 2024 — Faculty of Computers &amp; AI</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-page">
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <span style="font-size:22px;">🏛️</span>
+      <div class="brand-name">FCAIH</div>
+    </div>
+    <div class="topbar-right">
+      <span class="dr-badge">👨‍🏫 Doctor Portal</span>
+      <span style="font-size:20px;color:#555;cursor:pointer;padding:6px;" onclick="toggleFullscreen()">⛶</span>
+      <div class="topbar-avatar">S</div>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="nav-divider"></div>
+    <div class="sidebar-menu-label">MAIN</div>
+    <div class="nav-item active" id="nav-home" onclick="showPage('home',this)">
+      <span class="nav-icon">🏠</span> Dashboard
+    </div>
+    <div class="nav-item" id="nav-grades" onclick="showPage('grades',this)">
+      <span class="nav-icon">📝</span> Manage Grades
+    </div>
+    <div class="nav-item" id="nav-publish" onclick="showPage('publish',this)">
+      <span class="nav-icon">🚀</span> Publish Grades
+    </div>
+    <div class="sidebar-menu-label">SCHEDULE</div>
+    <div class="nav-item" id="nav-timetable" onclick="showPage('timetable',this)">
+      <span class="nav-icon">📅</span> Teaching Schedule
+    </div>
+    <div class="nav-item" id="nav-exams" onclick="showPage('exams',this)">
+      <span class="nav-icon">📋</span> Exam Schedule
+    </div>
+    <div class="sidebar-menu-label">ACCOUNT</div>
+    <div class="nav-item" id="nav-profile" onclick="showPage('profile',this)">
+      <span class="nav-icon">👤</span> My Profile
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-logout" onclick="doLogout()">
+      <span class="nav-icon">⏻</span> Logout
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="welcome-row">
+        <div class="welcome-card">
+          <div class="wc-title">Welcome, Doctor</div>
+          <div class="wc-dept">Computer Science Department · Spring 2025</div>
+        </div>
+        <div class="profile-btn-card" onclick="showPage('profile',document.getElementById('nav-profile'))">
+          <span>My Profile</span>
+          <span style="font-size:26px;">👨‍🏫</span>
+        </div>
+      </div>
+      <div class="cards-grid">
+        <div class="dashboard-card card-blue" onclick="showPage('grades',document.getElementById('nav-grades'))">
+          <div class="dc-label">Manage Student Grades</div>
+          <div class="dc-icon">📝</div>
+        </div>
+        <div class="dashboard-card card-green" onclick="showPage('publish',document.getElementById('nav-publish'))">
+          <div class="dc-label">Publish Grades</div>
+          <div class="dc-icon">🚀</div>
+        </div>
+        <div class="dashboard-card card-purple" onclick="showPage('timetable',document.getElementById('nav-timetable'))">
+          <div class="dc-label">Teaching Schedule</div>
+          <div class="dc-icon">📅</div>
+        </div>
+        <div class="dashboard-card card-pink" onclick="showPage('exams',document.getElementById('nav-exams'))">
+          <div class="dc-label">Exam Schedule</div>
+          <div class="dc-icon">📋</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANAGE GRADES -->
+    <div class="page" id="page-grades">
+      <div class="page-header">
+        <h2>📝 Manage Student Grades</h2>
+      </div>
+      <div class="course-selector">
+        <div class="course-pill active" onclick="selectCourse(this,'CS101')">CS101</div>
+        <div class="course-pill" onclick="selectCourse(this,'CS201')">CS201</div>
+        <div class="course-pill" onclick="selectCourse(this,'CS301')">CS301</div>
+        <div class="course-pill" onclick="selectCourse(this,'CS401')">CS401</div>
+        <div class="course-pill" onclick="selectCourse(this,'CS501')">CS501</div>
+      </div>
+      <div class="grades-wrap">
+        <div class="grades-toolbar">
+          <h3 id="course-label">CS101 — Intro to Computer Science</h3>
+          <div class="grades-actions">
+            <input class="search-input" placeholder="🔍 Search student..." oninput="filterStudents(this.value)">
+            <button class="btn btn-ghost" onclick="editAllRows()">✏️ Edit All</button>
+            <button class="btn btn-success" onclick="saveAllGrades()">💾 Save All</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Student ID</th><th>Student Name</th>
+                <th>Quiz (20)</th><th>Midterm (30)</th><th>Final (50)</th>
+                <th>Total (100)</th><th>Grade</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="grades-tbody"></tbody>
+          </table>
+        </div>
+        <div class="stats-bar" id="stats-bar"></div>
+        <div class="pagination" id="pagination-bar"></div>
+      </div>
+    </div>
+
+    <!-- PUBLISH GRADES -->
+    <div class="page" id="page-publish">
+      <div class="page-header">
+        <h2>🚀 Publish Grades</h2>
+      </div>
+
+      <!-- Course selector for publish -->
+      <div class="course-selector" style="margin-bottom:20px;">
+        <div class="course-pill active" onclick="selectPubCourse(this,'CS101')">CS101</div>
+        <div class="course-pill" onclick="selectPubCourse(this,'CS201')">CS201</div>
+        <div class="course-pill" onclick="selectPubCourse(this,'CS301')">CS301</div>
+        <div class="course-pill" onclick="selectPubCourse(this,'CS401')">CS401</div>
+        <div class="course-pill" onclick="selectPubCourse(this,'CS501')">CS501</div>
+      </div>
+
+      <!-- QUIZ section -->
+      <div class="pub-section">
+        <div class="grades-wrap">
+          <div class="pub-section-header">
+            <h3>📌 Quiz Grades <span style="font-weight:400;color:#757575;font-size:13px;">(out of 20)</span></h3>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-orange btn-sm" onclick="publishGradeType('quiz')">🚀 Publish Quiz</button>
+              <button class="btn btn-ghost btn-sm" onclick="unpublishGradeType('quiz')">✖ Unpublish</button>
+            </div>
+          </div>
+          <div class="pub-status-bar" id="pub-status-quiz"><!-- dots --></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>#</th><th>Student ID</th><th>Student Name</th><th>Quiz (20)</th><th>Published</th></tr></thead>
+              <tbody id="pub-quiz-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIDTERM section -->
+      <div class="pub-section">
+        <div class="grades-wrap">
+          <div class="pub-section-header">
+            <h3>📌 Midterm Grades <span style="font-weight:400;color:#757575;font-size:13px;">(out of 30)</span></h3>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-purple btn-sm" onclick="publishGradeType('mid')">🚀 Publish Midterm</button>
+              <button class="btn btn-ghost btn-sm" onclick="unpublishGradeType('mid')">✖ Unpublish</button>
+            </div>
+          </div>
+          <div class="pub-status-bar" id="pub-status-mid"><!-- dots --></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>#</th><th>Student ID</th><th>Student Name</th><th>Midterm (30)</th><th>Published</th></tr></thead>
+              <tbody id="pub-mid-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINAL section -->
+      <div class="pub-section">
+        <div class="grades-wrap">
+          <div class="pub-section-header">
+            <h3>📌 Final Grades <span style="font-weight:400;color:#757575;font-size:13px;">(out of 50)</span></h3>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-success btn-sm" onclick="publishGradeType('final')">🚀 Publish Final</button>
+              <button class="btn btn-ghost btn-sm" onclick="unpublishGradeType('final')">✖ Unpublish</button>
+            </div>
+          </div>
+          <div class="pub-status-bar" id="pub-status-final"><!-- dots --></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>#</th><th>Student ID</th><th>Student Name</th><th>Final (50)</th><th>Total (100)</th><th>Letter</th><th>Published</th></tr></thead>
+              <tbody id="pub-final-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEACHING SCHEDULE -->
+    <div class="page" id="page-timetable">
+      <div class="page-header"><h2>📅 Teaching Schedule</h2></div>
+      <div class="timetable-wrap">
+        <div class="tt-header">
+          <div class="tt-cell">Time</div>
+          <div class="tt-cell">Sunday</div><div class="tt-cell">Monday</div>
+          <div class="tt-cell">Tuesday</div><div class="tt-cell">Wednesday</div><div class="tt-cell">Thursday</div>
+        </div>
+        <div class="tt-row">
+          <div class="tt-time">8:00–9:30</div>
+          <div class="tt-slot"><div class="tt-class">CS101<br><small>Hall A-101</small></div></div>
+          <div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class">CS101<br><small>Hall A-101</small></div></div>
+          <div class="tt-empty"></div><div class="tt-empty"></div>
+        </div>
+        <div class="tt-row">
+          <div class="tt-time">9:45–11:15</div>
+          <div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class-2">CS301<br><small>Hall B-203</small></div></div>
+          <div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class-2">CS301<br><small>Hall B-203</small></div></div>
+          <div class="tt-empty"></div>
+        </div>
+        <div class="tt-row">
+          <div class="tt-time">11:30–1:00</div>
+          <div class="tt-slot"><div class="tt-class-3">CS401<br><small>Lab C-305</small></div></div>
+          <div class="tt-empty"></div><div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class-3">CS401<br><small>Lab C-305</small></div></div>
+          <div class="tt-empty"></div>
+        </div>
+        <div class="tt-row">
+          <div class="tt-time">1:15–2:45</div>
+          <div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class">CS501<br><small>Hall A-102</small></div></div>
+          <div class="tt-empty"></div><div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class">CS501<br><small>Hall A-102</small></div></div>
+        </div>
+        <div class="tt-row">
+          <div class="tt-time">3:00–4:30</div>
+          <div class="tt-empty"></div><div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class-2">CS201<br><small>Hall D-110</small></div></div>
+          <div class="tt-empty"></div>
+          <div class="tt-slot"><div class="tt-class-2">CS201<br><small>Hall D-110</small></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM SCHEDULE -->
+    <div class="page" id="page-exams">
+      <div class="page-header"><h2>📋 Final Exam Schedule</h2></div>
+      <div id="exams-list"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="page-profile">
+      <div class="page-header"><h2>👨‍🏫 Doctor Profile</h2></div>
+      <div class="profile-card">
+        <div class="profile-avatar-big">S</div>
+        <div class="profile-field">
+          <label>Full Name (English)</label>
+          <input type="text" value="DR. SARA NAIEM ">
+        </div>
+        <div class="profile-field">
+          <label>Staff ID</label>
+          <input type="text" value="DR-2010-0042">
+        </div>
+        <div class="profile-field">
+          <label>Department</label>
+          <input type="text" value="Computer Science">
+        </div>
+        <div class="profile-field">
+          <label>Specialization</label>
+          <input type="text" value="Artificial Intelligence &amp; Machine Learning">
+        </div>
+        <div class="profile-field">
+          <label>Email</label>
+          <input type="email" value="dr.sara@fcaih.edu.eg">
+        </div>
+        <div class="profile-field">
+          <label>Phone</label>
+          <input type="text" value="+20 100 123 4567">
+        </div>
+        <div class="profile-field">
+          <label>Office</label>
+          <input type="text" value="Room 305, Building B">
+        </div>
+        <div class="profile-field">
+          <label>New Password</label>
+          <input type="password" placeholder="Leave blank to keep current">
+        </div>
+        <button class="btn btn-primary" style="margin-top:8px" onclick="saveProfile()">💾 Save Changes</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ====== 50 STUDENTS ======
+const students=[
+  {id:'20210001',name:'Ahmed Mohamed Ali'},{id:'20210002',name:'Sara Ahmed Hassan'},
+  {id:'20210003',name:'Mohamed Ibrahim Omar'},{id:'20210004',name:'Nour Khaled Mahmoud'},
+  {id:'20210005',name:'Omar Youssef Adel'},{id:'20210006',name:'Fatima Ali Mostafa'},
+  {id:'20210007',name:'Karim Hossam Nabil'},{id:'20210008',name:'Layla Tarek Saad'},
+  {id:'20210009',name:'Youssef Amr Zakaria'},{id:'20210010',name:'Mariam Wael Fouad'},
+  {id:'20210011',name:'Adam Sherif Hamdy'},{id:'20210012',name:'Hana Essam Rashad'},
+  {id:'20210013',name:'Ziad Ramadan Fathy'},{id:'20210014',name:'Rania Moustafa Lotfy'},
+  {id:'20210015',name:'Tamer Gamal Abdel'},{id:'20210016',name:'Dina Ashraf Helmy'},
+  {id:'20210017',name:'Sami Bassem Wahby'},{id:'20210018',name:'Nada Hussein Gaber'},
+  {id:'20210019',name:'Fady Magdy Samir'},{id:'20210020',name:'Aya Osama Rizk'},
+  {id:'20210021',name:'Hesham Ayman Morsy'},{id:'20210022',name:'Salma Waleed Nour'},
+  {id:'20210023',name:'Mostafa Emad Selim'},{id:'20210024',name:'Maha Fares Atef'},
+  {id:'20210025',name:'Amr Khaled Mansour'},{id:'20210026',name:'Rana Hany Barakat'},
+  {id:'20210027',name:'Shady Tarek Fouad'},{id:'20210028',name:'Noha Samir Abdalla'},
+  {id:'20210029',name:'Adham Ramy Sabry'},{id:'20210030',name:'Yasmin Lotfy Ahmed'},
+  {id:'20210031',name:'Kareem Sherif Youssef'},{id:'20210032',name:'Nadia Adel Kamel'},
+  {id:'20210033',name:'Baher Ibrahim Said'},{id:'20210034',name:'Ghada Tawfik Nassar'},
+  {id:'20210035',name:'Seif Alaa Abdou'},{id:'20210036',name:'Eman Ramzy Morcos'},
+  {id:'20210037',name:'Mazen Hossam Salem'},{id:'20210038',name:'Reham Nader Zaki'},
+  {id:'20210039',name:'Ayman Galal Rifaat'},{id:'20210040',name:'Lobna Saeed Hamam'},
+  {id:'20210041',name:'Tarek Medhat Fakhry'},{id:'20210042',name:'Heba Ashraf Mounir'},
+  {id:'20210043',name:'Waleed Mahmoud Nassar'},{id:'20210044',name:'Shaymaa Ali Hassan'},
+  {id:'20210045',name:'Ramzy Hazem Zohdy'},{id:'20210046',name:'Doaa Tamer Saleh'},
+  {id:'20210047',name:'Bassem Samir Dawoud'},{id:'20210048',name:'Rasha Khaled Barsoum'},
+  {id:'20210049',name:'Sherif Ahmed Sobhy'},{id:'20210050',name:'Mona Wafaa Ghonim'},
+];
+
+const courseNames={
+  CS201:'CS201 — ETHICS',
+  CS101:'CS101 — Intro to Computer Science',
+  CS301:'CS301 — Algorithms',
+  CS401:'CS401 — AI Fundamentals',
+  CS501:'CS501 — Machine Learning'
+};
+const courses=Object.keys(courseNames);
+
+const grades={};
+// published[type][course] = boolean
+const published={quiz:{},mid:{},final:{}};
+courses.forEach(c=>{published.quiz[c]=false;published.mid[c]=false;published.final[c]=false;});
+
+let currentCourse='CS101', currentPage=1, currentPubCourse='CS101';
+const perPage=15;
+let filteredStudents=[...students];
+
+function seededRand(seed){let x=Math.sin(seed+1)*10000;return x-Math.floor(x);}
+
+function initGrades(c){
+  if(!grades[c]){
+    grades[c]={};
+    students.forEach((s,i)=>{
+      const base=parseInt(s.id.slice(-2))*3+i+courses.indexOf(c)*7;
+      grades[c][s.id]={
+        quiz:  Math.min(20,Math.max(8, Math.round(seededRand(base)*12+8))),
+        mid:   Math.min(30,Math.max(12,Math.round(seededRand(base+11)*18+12))),
+        final: Math.min(50,Math.max(20,Math.round(seededRand(base+23)*28+20)))
+      };
+    });
+  }
+}
+
+function getLetterGrade(t){
+  if(t>=90)return{l:'A+',cls:'grade-a'};
+  if(t>=85)return{l:'A',cls:'grade-a'};
+  if(t>=80)return{l:'B+',cls:'grade-b'};
+  if(t>=75)return{l:'B',cls:'grade-b'};
+  if(t>=70)return{l:'C+',cls:'grade-c'};
+  if(t>=65)return{l:'C',cls:'grade-c'};
+  if(t>=60)return{l:'D',cls:'grade-d'};
+  return{l:'F',cls:'grade-f'};
+}
+
+// ==== GRADES TABLE ====
+function renderGrades(){
+  initGrades(currentCourse);
+  const tbody=document.getElementById('grades-tbody');
+  const start=(currentPage-1)*perPage;
+  const end=Math.min(start+perPage,filteredStudents.length);
+  tbody.innerHTML=filteredStudents.slice(start,end).map((s,i)=>{
+    const g=grades[currentCourse][s.id];
+    const total=(g.quiz||0)+(g.mid||0)+(g.final||0);
+    const letter=getLetterGrade(total);
+    return`<tr>
+      <td>${start+i+1}</td>
+      <td><strong>${s.id}</strong></td>
+      <td>${s.name}</td>
+      <td><input class="grade-input" id="quiz-${s.id}" type="number" min="0" max="20" value="${g.quiz}" disabled onchange="recalcRow('${s.id}')"></td>
+      <td><input class="grade-input" id="mid-${s.id}" type="number" min="0" max="30" value="${g.mid}" disabled onchange="recalcRow('${s.id}')"></td>
+      <td><input class="grade-input" id="final-${s.id}" type="number" min="0" max="50" value="${g.final}" disabled onchange="recalcRow('${s.id}')"></td>
+      <td><strong id="total-${s.id}">${total}</strong></td>
+      <td><span class="grade-badge ${letter.cls}" id="letter-${s.id}">${letter.l}</span></td>
+      <td>
+        <button class="edit-btn" id="editbtn-${s.id}" onclick="editRow('${s.id}')">✏️ Edit</button>
+        <button class="save-btn" id="savebtn-${s.id}" onclick="saveRow('${s.id}')">✅ Save</button>
+      </td>
+    </tr>`;
+  }).join('');
+  renderStats();
+  renderPagination();
+}
+
+function recalcRow(id){
+  const q=+document.getElementById('quiz-'+id).value||0;
+  const m=+document.getElementById('mid-'+id).value||0;
+  const f=+document.getElementById('final-'+id).value||0;
+  const t=q+m+f;
+  document.getElementById('total-'+id).textContent=t;
+  const letter=getLetterGrade(t);
+  const lb=document.getElementById('letter-'+id);
+  lb.textContent=letter.l; lb.className='grade-badge '+letter.cls;
+}
+
+function editRow(id){
+  ['quiz-','mid-','final-'].forEach(p=>{
+    const el=document.getElementById(p+id);
+    el.disabled=false; el.style.background='#e8f0fe'; el.style.borderColor='var(--primary)';
+  });
+  document.getElementById('editbtn-'+id).style.display='none';
+  document.getElementById('savebtn-'+id).style.display='inline-block';
+}
+
+function saveRow(id){
+  const q=Math.min(20,Math.max(0,+document.getElementById('quiz-'+id).value||0));
+  const m=Math.min(30,Math.max(0,+document.getElementById('mid-'+id).value||0));
+  const f=Math.min(50,Math.max(0,+document.getElementById('final-'+id).value||0));
+  grades[currentCourse][id]={quiz:q,mid:m,final:f};
+  document.getElementById('quiz-'+id).value=q;
+  document.getElementById('mid-'+id).value=m;
+  document.getElementById('final-'+id).value=f;
+  ['quiz-','mid-','final-'].forEach(p=>{
+    const el=document.getElementById(p+id);
+    el.disabled=true; el.style.background=''; el.style.borderColor='';
+  });
+  document.getElementById('editbtn-'+id).style.display='inline-block';
+  document.getElementById('savebtn-'+id).style.display='none';
+  recalcRow(id);
+  showToast('✅ Saved grade for '+id,'success');
+  renderStats();
+}
+
+function editAllRows(){
+  const start=(currentPage-1)*perPage;
+  const end=Math.min(start+perPage,filteredStudents.length);
+  filteredStudents.slice(start,end).forEach(s=>editRow(s.id));
+  showToast('✏️ All rows are now editable','info');
+}
+
+function saveAllGrades(){
+  const start=(currentPage-1)*perPage;
+  const end=Math.min(start+perPage,filteredStudents.length);
+  filteredStudents.slice(start,end).forEach(s=>{
+    const sb=document.getElementById('savebtn-'+s.id);
+    if(sb&&sb.style.display!=='none') saveRow(s.id);
+  });
+  showToast('💾 All grades saved!','success');
+}
+
+function renderStats(){
+  initGrades(currentCourse);
+  const all=students.map(s=>{const g=grades[currentCourse][s.id];return g.quiz+g.mid+g.final;});
+  const avg=(all.reduce((a,b)=>a+b,0)/all.length).toFixed(1);
+  const pass=all.filter(x=>x>=60).length;
+  document.getElementById('stats-bar').innerHTML=`
+    <div class="stat-item"><div class="stat-value">${all.length}</div><div class="stat-label">Total</div></div>
+    <div class="stat-item"><div class="stat-value">${avg}</div><div class="stat-label">Average</div></div>
+    <div class="stat-item"><div class="stat-value">${Math.max(...all)}</div><div class="stat-label">Highest</div></div>
+    <div class="stat-item"><div class="stat-value">${Math.min(...all)}</div><div class="stat-label">Lowest</div></div>
+    <div class="stat-item"><div class="stat-value" style="color:#43a047">${pass}</div><div class="stat-label">Passed</div></div>
+    <div class="stat-item"><div class="stat-value" style="color:#e53935">${all.length-pass}</div><div class="stat-label">Failed</div></div>`;
+}
+
+function renderPagination(){
+  const totalPages=Math.ceil(filteredStudents.length/perPage);
+  let html='';
+  for(let i=1;i<=totalPages;i++) html+=`<button class="page-btn${i===currentPage?' active':''}" onclick="gotoPage(${i})">${i}</button>`;
+  html+=`<div class="page-info">Showing ${(currentPage-1)*perPage+1}–${Math.min(currentPage*perPage,filteredStudents.length)} of ${filteredStudents.length}</div>`;
+  document.getElementById('pagination-bar').innerHTML=html;
+}
+function gotoPage(p){currentPage=p;renderGrades();}
+function filterStudents(q){
+  filteredStudents=q?students.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.id.includes(q)):[...students];
+  currentPage=1;renderGrades();
+}
+function selectCourse(el,code){
+  document.querySelectorAll('#page-grades .course-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); currentCourse=code;
+  document.getElementById('course-label').textContent=courseNames[code];
+  currentPage=1; filteredStudents=[...students]; renderGrades();
+}
+
+// ==== PUBLISH PAGE ====
+function selectPubCourse(el,code){
+  document.querySelectorAll('#page-publish .course-selector .course-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active'); currentPubCourse=code;
+  renderAllPubTables();
+}
+
+function renderPublishPage(){
+  courses.forEach(c=>initGrades(c));
+  currentPubCourse='CS101';
+  // reset course pills
+  document.querySelectorAll('#page-publish .course-selector .course-pill').forEach((p,i)=>{p.classList.toggle('active',i===0);});
+  renderAllPubTables();
+}
+
+function renderAllPubTables(){
+  renderPubStatusBars();
+  renderPubTable('quiz','pub-quiz-tbody');
+  renderPubTable('mid','pub-mid-tbody');
+  renderPubFinalTable();
+}
+
+function renderPubStatusBars(){
+  ['quiz','mid','final'].forEach(type=>{
+    const bar=document.getElementById('pub-status-'+type);
+    if(!bar) return;
+    bar.innerHTML=courses.map(c=>`
+      <div class="pub-status-item">
+        <div class="pub-dot ${published[type][c]?'yes':'no'}" id="dot-${type}-${c}"></div>
+        <span>${c}: ${published[type][c]?'Published':'Pending'}</span>
+      </div>`).join('');
+  });
+}
+
+function renderPubTable(type, tbodyId){
+  const c=currentPubCourse;
+  initGrades(c);
+  const max={quiz:20,mid:30}[type];
+  document.getElementById(tbodyId).innerHTML=students.map((s,i)=>{
+    const val=grades[c][s.id][type];
+    const isPub=published[type][c];
+    return`<tr>
+      <td>${i+1}</td>
+      <td><strong>${s.id}</strong></td>
+      <td>${s.name}</td>
+      <td>
+        <input class="grade-input" id="pub-${type}-${s.id}" type="number" min="0" max="${max}" value="${val}" disabled>
+        <button class="edit-btn" style="margin-left:4px;" onclick="editPubGrade('${type}','${s.id}',${max})">✏️</button>
+      </td>
+      <td><span class="pub-chip ${isPub?'pub-yes':'pub-no'}" id="chip-${type}-${s.id}">${isPub?'✅ Published':'⏳ Pending'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPubFinalTable(){
+  const c=currentPubCourse;
+  initGrades(c);
+  document.getElementById('pub-final-tbody').innerHTML=students.map((s,i)=>{
+    const g=grades[c][s.id];
+    const total=g.quiz+g.mid+g.final;
+    const letter=getLetterGrade(total);
+    const isPub=published.final[c];
+    return`<tr>
+      <td>${i+1}</td>
+      <td><strong>${s.id}</strong></td>
+      <td>${s.name}</td>
+      <td>
+        <input class="grade-input" id="pub-final-${s.id}" type="number" min="0" max="50" value="${g.final}" disabled>
+        <button class="edit-btn" style="margin-left:4px;" onclick="editPubGrade('final','${s.id}',50)">✏️</button>
+      </td>
+      <td><strong>${total}</strong></td>
+      <td><span class="grade-badge ${letter.cls}">${letter.l}</span></td>
+      <td><span class="pub-chip ${isPub?'pub-yes':'pub-no'}" id="chip-final-${s.id}">${isPub?'✅ Published':'⏳ Pending'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function editPubGrade(type,id,max){
+  const el=document.getElementById('pub-'+type+'-'+id);
+  if(!el) return;
+  el.disabled=false; el.style.background='#e8f0fe'; el.style.borderColor='var(--primary)';
+  el.onblur=()=>{
+    const v=Math.min(max,Math.max(0,+el.value||0));
+    el.value=v;
+    grades[currentPubCourse][id][type]=v;
+    el.disabled=true; el.style.background=''; el.style.borderColor='';
+    showToast(`Grade updated for ${id}`,'success');
+  };
+  el.focus();
+}
+
+function publishGradeType(type){
+  courses.forEach(c=>{published[type][c]=true;});
+  renderPubStatusBars();
+  students.forEach(s=>{
+    const chip=document.getElementById('chip-'+type+'-'+s.id);
+    if(chip){chip.className='pub-chip pub-yes'; chip.textContent='✅ Published';}
+  });
+  const nm={quiz:'Quiz',mid:'Midterm',final:'Final'};
+  showToast(`🚀 ${nm[type]} grades published to all students!`,'success');
+}
+
+function unpublishGradeType(type){
+  courses.forEach(c=>{published[type][c]=false;});
+  renderPubStatusBars();
+  students.forEach(s=>{
+    const chip=document.getElementById('chip-'+type+'-'+s.id);
+    if(chip){chip.className='pub-chip pub-no'; chip.textContent='⏳ Pending';}
+  });
+  const nm={quiz:'Quiz',mid:'Midterm',final:'Final'};
+  showToast(`✖ ${nm[type]} grades unpublished`,'info');
+}
+
+// Exams
+const exams=[
+  {day:'15',month:'Jun',course:'CS101 - Intro to Computer Science',time:'9:00 AM',hall:'Hall A-101',duration:'3 hrs'},
+  {day:'17',month:'Jun',course:'CS201 - Data Structures',time:'11:00 AM',hall:'Hall B-203',duration:'3 hrs'},
+  {day:'19',month:'Jun',course:'CS301 - Algorithms',time:'9:00 AM',hall:'Hall C-105',duration:'3 hrs'},
+  {day:'21',month:'Jun',course:'CS401 - AI Fundamentals',time:'1:00 PM',hall:'Lab D-201',duration:'2.5 hrs'},
+  {day:'23',month:'Jun',course:'CS501 - Machine Learning',time:'9:00 AM',hall:'Hall A-102',duration:'3 hrs'},
+];
+function renderExams(){
+  document.getElementById('exams-list').innerHTML=exams.map(e=>`
+    <div class="exam-card">
+      <div class="exam-date"><div class="day">${e.day}</div><div class="month">${e.month}</div></div>
+      <div class="exam-info"><h4>${e.course}</h4><p>🕐 ${e.time} &nbsp;|&nbsp; 🏛️ ${e.hall} &nbsp;|&nbsp; ⏱️ ${e.duration}</p></div>
+      <div class="exam-badge">Final Exam</div>
+    </div>`).join('');
+}
+
+// Navigation
+const pageMap={home:'page-home',grades:'page-grades',publish:'page-publish',timetable:'page-timetable',exams:'page-exams',profile:'page-profile'};
+function showPage(name,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(pageMap[name]||'page-home').classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  if(name==='grades') renderGrades();
+  if(name==='exams') renderExams();
+  if(name==='publish') renderPublishPage();
+  closeSidebar();
+}
+
+// Login
+function updateLoginBtn(){
+  const e=document.getElementById('login-email').value.trim();
+  const p=document.getElementById('login-pass').value.trim();
+  document.getElementById('login-btn').className=e&&p?'login-btn ready':'login-btn';
+}
+function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value.trim();
+  if(!email){document.getElementById('email-err').style.display='block';return;}
+  document.getElementById('email-err').style.display='none';
+  if(!pass){document.getElementById('pass-err').style.display='block';return;}
+  document.getElementById('pass-err').style.display='none';
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('dashboard-page').style.display='block';
+  courses.forEach(c=>initGrades(c));
+}
+function doLogout(){
+  document.getElementById('dashboard-page').style.display='none';
+  document.getElementById('login-page').style.display='flex';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-btn').className='login-btn';
+}
+function togglePass(){
+  const inp=document.getElementById('login-pass');
+  inp.type=inp.type==='password'?'text':'password';
+}
+function toggleSidebar(){
+  const s=document.getElementById('sidebar'),o=document.getElementById('sidebar-overlay');
+  s.classList.contains('open')?closeSidebar():(s.classList.add('open'),o.classList.add('open'));
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+function toggleFullscreen(){
+  document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+}
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function saveProfile(){showToast('✅ Profile updated!','success');}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('login-page').style.display!=='none') doLogin();
+});
+
+courses.forEach(c=>initGrades(c));
+renderExams();
+</script>
+</body>
+</html>
